@@ -2,8 +2,12 @@ import { RequestMessage } from "../../server";
 import { TextDocumentIdentifier, documents } from "../../documents"; 
 import * as fs from "fs";
 import log from "../../log";
+import { Position } from "../../types";
+
+const MAX_LENGTH = 1000;
 
 const words = fs.readFileSync("/usr/share/dict/words").toString().split("\n");
+// const words = fs.readFileSync("/home/pisek/Projekty/AVRAsmLSP/server/src/dictionary").toString().split("\n");
 
 type CompletionItem = {
 	label: string;
@@ -12,11 +16,6 @@ type CompletionItem = {
 interface CompletionList {
 	isIncomplete: boolean;
 	items: CompletionItem[];
-}
-
-interface Position{
-	line: number;
-	character: number;
 }
 
 interface TextDocumentPositionParams{
@@ -41,13 +40,13 @@ export const completion = (message: RequestMessage): CompletionList | null => {
 	const items = words.filter((word) => {
 		return word.startsWith(currentPrefix);
 	})
-	.slice(0,1000)
+	.slice(0,MAX_LENGTH)
 	.map((word)=> {
 		return {label: word};
 	});
 
 	return {
-		isIncomplete: true,
+		isIncomplete: items.length === MAX_LENGTH,
 		items,
 	};
 };

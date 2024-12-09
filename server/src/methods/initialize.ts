@@ -12,10 +12,10 @@ interface InitializeResult{
 
 export const initialize = (message: RequestMessage):InitializeResult => {
   return {
-    capabilities: {completionProvider: {}, textDocumentSync: 1},
+    capabilities: {completionProvider: {}, textDocumentSync: 1, diagnosticProvider: { interFileDependencies: false, workspaceDiagnostics: false,}},
     serverInfo: {
       name: "AVRAsmLSP",
-      version: "0.1.0"
+      version: "0.2.0"
     }
   }
 };

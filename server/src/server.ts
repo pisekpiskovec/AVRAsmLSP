@@ -1,6 +1,8 @@
 import log from "./log";
 import { initialize } from "./methods/initialize";
+import { codeAction } from "./methods/textDocument/codeAction";
 import { completion } from "./methods/textDocument/completion";
+import { diagnostic } from "./methods/textDocument/diagnostic";
 import { didChange } from "./methods/textDocument/didChange";
 
 interface Message {
@@ -16,7 +18,11 @@ export interface RequestMessage extends NotificationMessage {
   id: number | string;
 }
 
-type RequestMethod = (message: RequestMessage) => ReturnType<typeof initialize> | ReturnType<typeof completion>;
+type RequestMethod = (message: RequestMessage) =>
+  ReturnType<typeof initialize> |
+  ReturnType<typeof completion> |
+  ReturnType<typeof diagnostic> |
+  ReturnType<typeof codeAction>;
 
 type NotificationMethod = (message: NotificationMessage) => void;
 
@@ -24,6 +30,8 @@ const methodLookup: Record<string, RequestMethod | NotificationMethod> = {
   initialize,
   "textDocument/completion": completion,
   "textDocument/didChange" : didChange,
+  "textDocument/diagnostic": diagnostic,
+  "textDocument/codeAction": codeAction,
 };
 
 const respond = (id: RequestMessage['id'], result: object | null) => {
